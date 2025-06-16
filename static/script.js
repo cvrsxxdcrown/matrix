@@ -7,10 +7,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const cols = parseInt(colsInput.value);
         const container = document.getElementById(`${matrixName}_matrix`);
 
-        // Удаляем старые поля
         container.innerHTML = '';
 
-        // Создаём новые поля
         for (let i = 0; i < rows; i++) {
             const rowDiv = document.createElement('div');
             for (let j = 0; j < cols; j++) {
@@ -19,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 input.step = 'any';
                 input.name = `${matrixName}_${i}_${j}`;
                 input.className = 'matrix-cell';
-                input.value = 0; // начальное значение
+                input.value = 0; 
                 rowDiv.appendChild(input);
             }
             container.appendChild(rowDiv);
@@ -27,7 +25,6 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 });
 
-// Копирование результата
 function copyResult() {
     const resultBlock = document.getElementById("result-block");
     if (!resultBlock) return;
