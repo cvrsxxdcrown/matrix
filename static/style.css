@@ -1,0 +1,152 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f9f9f9;
+    padding: 30px;
+    color: #333;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+h1 {
+    text-align: center;
+    font-size: 2.5em;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: auto;
+    background: white;
+    padding: 30px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    border-radius: 12px;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    display: block;
+}
+
+table td {
+    padding: 5px;
+    text-align: center;
+    word-break: break-word;
+}
+
+input[type='number'], select {
+    padding: 5px;
+    margin: 5px 0;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+input.matrix-cell {
+    width: 60px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.matrix-block {
+    margin-bottom: 20px;
+}
+
+.result, .error {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.result {
+    background: #ecf0f1;
+}
+
+.error {
+    background: #ffe6e6;
+    color: #c0392b;
+}
+
+button {
+    background-color: #2980b9;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+    width: auto;
+}
+
+button:hover {
+    background-color: #1f618d;
+}
+
+.matrix-inputs {
+    display: grid;
+    gap: 5px;
+}
+
+.site-footer {
+    text-align: center;
+    padding: 15px 10px;
+    margin-top: 40px;
+    font-size: 0.9rem;
+    color: #666;
+    border-top: 1px solid #ddd;
+    background-color: #f9f9f9;
+    border-radius: 0 0 12px 12px;
+    user-select: none; /* Чтобы не выделялось при кликах */
+}
+
+
+@media (max-width: 768px) {
+    body {
+        padding: 15px;
+    }
+
+    .container {
+        padding: 20px;
+        max-width: 100%;
+        margin: 10px;
+    }
+
+    h1 {
+        font-size: 2em;
+    }
+
+    input.matrix-cell {
+        width: 45px;
+    }
+
+    .matrix-inputs {
+
+        grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+        overflow-x: auto;
+    }
+
+    button {
+        width: 100%;
+        font-size: 1.1rem;
+        padding: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.6em;
+    }
+
+    input.matrix-cell {
+        width: 35px;
+        padding: 6px 4px;
+    }
+
+    select {
+        font-size: 1rem;
+    }
+}

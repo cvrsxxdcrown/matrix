@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Matrix X</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+<div class="container">
+    <h1>Matrix X</h1>
+    <form method="POST">
+        <div class="matrix-block">
+            <h2>Матрица A</h2>
+            Размер:
+            <input type="number" name="a_rows" min="1" max="10" value="{{ a_rows }}" onchange="onSizeChange('a')"> x
+            <input type="number" name="a_cols" min="1" max="10" value="{{ a_cols }}" onchange="onSizeChange('a')">
+            <div id="a_matrix" class="matrix-inputs">
+                {% for i in range(a_rows) %}
+                    <div>
+                        {% for j in range(a_cols) %}
+                            <input class="matrix-cell" name="a_{{i}}_{{j}}" value="{{ matrix_a_values['a_' ~ i ~ '_' ~ j]|default(0) }}" type="number" step="any">
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="matrix-block">
+            <h2>Матрица B</h2>
+            Размер:
+            <input type="number" name="b_rows" min="1" max="10" value="{{ b_rows }}" onchange="onSizeChange('b')"> x
+            <input type="number" name="b_cols" min="1" max="10" value="{{ b_cols }}" onchange="onSizeChange('b')">
+            <div id="b_matrix" class="matrix-inputs">
+                {% for i in range(b_rows) %}
+                    <div>
+                        {% for j in range(b_cols) %}
+                            <input class="matrix-cell" name="b_{{i}}_{{j}}" value="{{ matrix_b_values['b_' ~ i ~ '_' ~ j]|default(0) }}" type="number" step="any">
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="matrix-block">
+            <h2>Операция</h2>
+            <select name="operation" onchange="this.form.submit()">
+                <option value="add" {% if selected_operation == 'add' %}selected{% endif %}>A + B</option>
+                <option value="subtract" {% if selected_operation == 'subtract' %}selected{% endif %}>A - B</option>
+                <option value="multiply" {% if selected_operation == 'multiply' %}selected{% endif %}>A × B</option>
+                <option value="transpose_a" {% if selected_operation == 'transpose_a' %}selected{% endif %}>Транспонировать A</option>
+                <option value="transpose_b" {% if selected_operation == 'transpose_b' %}selected{% endif %}>Транспонировать B</option>
+                <option value="inverse_a" {% if selected_operation == 'inverse_a' %}selected{% endif %}>Обратная A</option>
+                <option value="inverse_b" {% if selected_operation == 'inverse_b' %}selected{% endif %}>Обратная B</option>
+                <option value="determinant_a" {% if selected_operation == 'determinant_a' %}selected{% endif %}>Определитель A</option>
+                <option value="determinant_b" {% if selected_operation == 'determinant_b' %}selected{% endif %}>Определитель B</option>
+                <option value="rank_a" {% if selected_operation == 'rank_a' %}selected{% endif %}>Ранг A</option>
+                <option value="rank_b" {% if selected_operation == 'rank_b' %}selected{% endif %}>Ранг B</option>
+            </select>
+        </div>
+
+        <button type="submit">Вычислить</button>
+
+        {% if error %}
+            <div class="error">
+                <strong>Ошибка:</strong> {{ error }}
+            </div>
+        {% endif %}
+
+        {% if result is not none %}
+            <div class="result" id="result-block">
+                <h3>Результат:</h3>
+
+                {% if operation_latex %}
+                    <p>\[
+                        {{ operation_latex|safe }}
+                    \]</p>
+                {% elif operation_description %}
+                    <p><strong>Пояснение:</strong> {{ operation_description|safe }}</p>
+                {% endif %}
+
+                {% if matrix_steps %}
+                    <div class="matrix-steps">
+                        {% for step in matrix_steps %}
+                            <p>\[
+                                {{ step|safe }}
+                            \]</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% if selected_operation in ['add', 'subtract', 'multiply'] %}
+                    <p>\[
+                        A = {{ matrix_a_latex|safe }}, \quad B = {{ matrix_b_latex|safe }}
+                    \]</p>
+                    <p>\[
+                        A {{ '+' if selected_operation == 'add' else '-' if selected_operation == 'subtract' else '\times' }} B = {{ result_latex|safe }}
+                    \]</p>
+                {% endif %}
+
+                {% if selected_operation in ['determinant_a', 'determinant_b'] %}
+                    <p><strong>Определитель вычисляется по формуле Лапласа или методом Гаусса. Он показывает, является ли матрица вырожденной (обратимой).</strong></p>
+                {% endif %}
+
+                {% if selected_operation in ['rank_a', 'rank_b'] %}
+                    <p><strong>Ранг матрицы — это максимальное количество линейно независимых строк или столбцов. Он вычисляется методом Гаусса.</strong></p>
+                {% endif %}
+
+                {% if result.__class__.__name__ == 'ndarray' %}
+                    <table class="matrix-result">
+                        {% for row in result.tolist() %}
+                            <tr>
+                                {% for val in row %}
+                                    <td>{{ val|round(2) }}</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% else %}
+                    <p><strong>{{ result|round(4) }}</strong></p>
+                {% endif %}
+
+                <div style="margin-top: 15px;">
+                    <button type="button" onclick="copyResult()">📋 Копировать</button>
+                </div>
+            </div>
+        {% endif %}
+    </form>
+</div>
+<footer class="site-footer">
+    <p>Matrix_X &mdash; Ваш помощник по работе с матрицами</p>
+</footer>
+</body>
+</html>
